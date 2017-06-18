@@ -10,6 +10,7 @@ bin    = @["cgmpt"]
 
 requires "nim >= 0.17.0"
 requires "sdl2 >= 1.1"
+requires "opengl >= 1.1.0"
 
 # Tasks
 import strutils
