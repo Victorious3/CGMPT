@@ -17,3 +17,6 @@ import strutils
 
 task build_exe, "Compiles the application":
     exec "nim c --nimcache:$1/nimcache -o:$1/$2 $3/$4" % [binDir, executable, srcDir, main]
+
+task run, "Runs the application":
+    exec "$1/$2" % [binDir, executable]

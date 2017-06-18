@@ -1,7 +1,10 @@
 import sdl2
 
-if sdl2.init(sdl2.INIT_VIDEO + sdl2.INIT_AUDIO + sdl2.INIT_EVENTS):
-    raise newException(Exception, "sdl2.init error: " & $sdl2.getError())
+try:
+    sdl2.init(sdl2.INIT_VIDEO + sdl2.INIT_AUDIO + sdl2.INIT_EVENTS)
+except Exception:
+    echo getCurrentExceptionMsg()
+
 
 let window = sdl2.createWindow(
     title = "CGMPT", 
@@ -11,9 +14,6 @@ let window = sdl2.createWindow(
     h = 600, 
     flags = SDL_WINDOW_SHOWN + SDL_WINDOW_OPENGL
 )
-
-if isNil window:
-    raise newException(Exception, "sdl2.createWindow error: " & $sdl2.getError())
 
 var running = true
 
