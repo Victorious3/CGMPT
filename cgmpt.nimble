@@ -1,20 +1,24 @@
+import
+  strutils,
+  src/cgmpt/config
+const name = "cgmpt"
+
 # Package
-version     = "0.1"
+version     = config.VERSION
 author      = "copy x Vi"
 description = "City Gen Manager Project Thing"
 license     = "MIT"
 
-srcDir = "src"
-binDir = "bin"
-bin    = @["cgmpt"]
-
+# Dependencies
 requires "nim >= 0.17.0"
 requires "sdl2 >= 1.1"
 requires "opengl >= 1.1.0"
 
-# Tasks
-import strutils
+# Build options
+srcDir = "src"
+binDir = "bin"
+bin    = @[name]
 
-let executable = "cgmpt"
+# Tasks
 task run, "Runs the application":
-  exec "./$1/$2.exe" % [binDir, executable]
+  exec "./$#/$#" % [binDir, name]
