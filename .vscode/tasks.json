@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  
+  "isShellCommand": true,
+  "suppressTaskName": true,
+  "command": "nimble",
+  
+  "tasks": [{
+    "taskName": "build",
+    "isBuildCommand": true,
+    "args": [ "build" ]
+  }, {
+    "taskName": "run",
+    "args": [ "run" ]
+  }]
+}
