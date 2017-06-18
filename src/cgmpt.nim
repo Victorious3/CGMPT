@@ -10,12 +10,8 @@ const DEFAULT_SIZE = (
   height: 450
 )
 
-try:
-  sdl.init(sdl.INIT_VIDEO or sdl.INIT_AUDIO or sdl.INIT_EVENTS)
-except:
-  # Sadly we have to do this since sdl.init throws an exception if SDL is compiled without directx
-  # Let's hope that some of the other functions fail if SDL failed to intialize correctly
-  echo getCurrentExceptionMsg()
+if sdl.init(sdl.INIT_VIDEO or sdl.INIT_AUDIO or sdl.INIT_EVENTS) == SdlError:
+  raise newException(Exception, "sdl.init error: " & $sdl.getError())
 
 let window = sdl.createWindow(
   title = TITLE,
@@ -23,10 +19,13 @@ let window = sdl.createWindow(
   y = SDL_WINDOWPOS_CENTERED,
   w = cint(DEFAULT_SIZE.width),
   h = cint(DEFAULT_SIZE.height),
-  flags = SDL_WINDOW_SHOWN + SDL_WINDOW_OPENGL
+  flags = SDL_WINDOW_SHOWN or SDL_WINDOW_OPENGL
 )
 
-# OpenGL flags
+if isNil window:
+  raise newException(Exception, "sdl.createWindow error: " & $sdl.getError())
+
+# Opengl flags
 discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3)
 discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3)
 discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3)
