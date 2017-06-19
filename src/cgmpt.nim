@@ -2,9 +2,9 @@ import
   opengl as gl
 
 import 
-  cgmpt/config,
-  cgmpt/sdl,
-  cgmpt/render
+  cgmptpkg/config,
+  cgmptpkg/sdl,
+  cgmptpkg/render
 
 const BG_COLOR = (0.3, 0.1, 0.1)
 

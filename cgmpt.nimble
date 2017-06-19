@@ -1,6 +1,6 @@
 import
   strutils,
-  src/cgmpt/config
+  src/cgmptpkg/config
 const name = "cgmpt"
 
 # Package
