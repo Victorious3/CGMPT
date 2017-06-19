@@ -1,5 +1,6 @@
 import
-  opengl as gl
+  opengl as gl,
+  strutils
 
 import 
   cgmptpkg/config,
@@ -11,6 +12,15 @@ const BG_COLOR = (0.3, 0.1, 0.1)
 sdl.init("CGMPT - " & VERSION, (800, 450))
 # Call is needed to do all the OpenGL extension wrangling.
 gl.loadExtensions()
+
+# Set debug flag to get all log output
+# FIXME glDebugMessageCallback is from 4.3, fix hard dependency
+when DEBUG:
+  proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
+    echo "[GL]: " & $message # Assuming this is 0 terminated
+  glDebugMessageCallback(debugMessageCallback, nil)
+  #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nil, false)
 
 # OpenGL setup
 glEnable(GL_BLEND)
