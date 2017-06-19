@@ -1,51 +1,15 @@
 import
-  sdl2 as sdl,
   opengl as gl
-  
+
 import 
   cgmpt/config,
+  cgmpt/sdl,
   cgmpt/render
 
-const TITLE = "CGMPT - " & VERSION
 const BG_COLOR = (0.3, 0.1, 0.1)
-const DEFAULT_SIZE = (
-  width: 800.int32,
-  height: 450.int32
-)
 
-if sdl.init(sdl.INIT_VIDEO or sdl.INIT_AUDIO or sdl.INIT_EVENTS) == SdlError:
-  raise newException(Exception, "sdl.init error: " & $sdl.getError())
-
-let window = sdl.createWindow(
-  title = TITLE,
-  x = SDL_WINDOWPOS_CENTERED,
-  y = SDL_WINDOWPOS_CENTERED,
-  w = DEFAULT_SIZE.width,
-  h = DEFAULT_SIZE.height,
-  flags = SDL_WINDOW_SHOWN or SDL_WINDOW_OPENGL
-)
-
-if isNil window:
-  raise newException(Exception, "sdl.createWindow error: " & $sdl.getError())
-
-# Opengl flags
-discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3)
-discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3)
-discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
-
-when DEBUG:
-  discard glSetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG)
-
-discard glSetAttribute(SDL_GL_RED_SIZE, 5)
-discard glSetAttribute(SDL_GL_GREEN_SIZE, 5)
-discard glSetAttribute(SDL_GL_BLUE_SIZE, 5)
-discard glSetAttribute(SDL_GL_DEPTH_SIZE, 16)
-discard glSetAttribute(SDL_GL_DOUBLEBUFFER, 1)
-
-discard glSetSwapInterval(1)
-
-let context = window.glCreateContext()
-# Call is needed to do all the OpenGL extension wrangling
+sdl.init("CGMPT - " & VERSION, (800, 450))
+# Call is needed to do all the OpenGL extension wrangling.
 gl.loadExtensions()
 
 # OpenGL setup
@@ -55,31 +19,29 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glEnable(GL_CULL_FACE)
 glFrontFace(GL_CCW)
 
-glViewport(0, 0, DEFAULT_SIZE.width, DEFAULT_SIZE.height)
+glViewport(0, 0, 800, 450) # FIXME: Don't hardcode, get window size somehow.
 
-checkGLerror()
+gl.checkGLerror()
 
 var running = true
 
 # Processing events
-proc pollEvent =
+proc pollEvents() =
   var event: sdl.Event
   while sdl.pollEvent(event):
     case event.kind
-    of sdl.QuitEvent:
+    of sdl.EventType.QuitEvent:
       running = false
     else: discard
 
 # Application loop
 while running:
-  pollEvent()
-
+  pollEvents()
+  
   glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-  window.glSwapWindow()
+  sdl.swapBuffers()
 
 # Cleanup
 echo "Terminating!"
-
-sdl.destroy(window)
-glDeleteContext(context)
+sdl.destroy()
