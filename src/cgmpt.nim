@@ -1,13 +1,16 @@
 import
   sdl2 as sdl,
-  opengl as gl,
-  cgmpt/config
+  opengl as gl
+  
+import 
+  cgmpt/config,
+  cgmpt/render
 
 const TITLE = "CGMPT - " & VERSION
 const BG_COLOR = (0.3, 0.1, 0.1)
 const DEFAULT_SIZE = (
-  width: 800,
-  height: 450
+  width: 800.int32,
+  height: 450.int32
 )
 
 if sdl.init(sdl.INIT_VIDEO or sdl.INIT_AUDIO or sdl.INIT_EVENTS) == SdlError:
@@ -17,8 +20,8 @@ let window = sdl.createWindow(
   title = TITLE,
   x = SDL_WINDOWPOS_CENTERED,
   y = SDL_WINDOWPOS_CENTERED,
-  w = cint(DEFAULT_SIZE.width),
-  h = cint(DEFAULT_SIZE.height),
+  w = DEFAULT_SIZE.width,
+  h = DEFAULT_SIZE.height,
   flags = SDL_WINDOW_SHOWN or SDL_WINDOW_OPENGL
 )
 
@@ -27,11 +30,11 @@ if isNil window:
 
 # Opengl flags
 discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3)
-discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3)
 discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3)
 discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
 
-discard glSetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG)
+when DEBUG:
+  discard glSetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG)
 
 discard glSetAttribute(SDL_GL_RED_SIZE, 5)
 discard glSetAttribute(SDL_GL_GREEN_SIZE, 5)
@@ -44,6 +47,17 @@ discard glSetSwapInterval(1)
 let context = window.glCreateContext()
 # Call is needed to do all the OpenGL extension wrangling
 gl.loadExtensions()
+
+# OpenGL setup
+glEnable(GL_BLEND)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+glEnable(GL_CULL_FACE)
+glFrontFace(GL_CCW)
+
+glViewport(0, 0, DEFAULT_SIZE.width, DEFAULT_SIZE.height)
+
+checkGLerror()
 
 var running = true
 
