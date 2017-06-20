@@ -12,14 +12,14 @@ const BG_COLOR = (0.3, 0.1, 0.1)
 
 sdl.init("CGMPT - " & VERSION, (800, 450))
 
-let error = glew.init()
+let error = glewInit()
 
 if int(error) != 0:
-  echo "Error initializing GLEW: " & $glew.getErrorString(error)
+  echo "Error initializing GLEW: " & $glewGetErrorString(error)
 
 # Set debug flag to get all log output
 when DEBUG:
-  if glew.getVar(KHR_debug):
+  if glewGetVar(KHR_debug):
     proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
       echo "[GL]: " & $message # Assuming this is 0 terminated
     glDebugMessageCallback(debugMessageCallback, nil)
