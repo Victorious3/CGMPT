@@ -5,22 +5,26 @@ import
 import 
   cgmptpkg/config,
   cgmptpkg/sdl,
+  cgmptpkg/glew,
   cgmptpkg/render
 
 const BG_COLOR = (0.3, 0.1, 0.1)
 
 sdl.init("CGMPT - " & VERSION, (800, 450))
-# Call is needed to do all the OpenGL extension wrangling.
-gl.loadExtensions()
+
+let error = glew.init()
+
+if int(error) != 0:
+  echo "Error initializing GLEW: " & $glew.getErrorString(error)
 
 # Set debug flag to get all log output
-# FIXME glDebugMessageCallback is from 4.3, fix hard dependency
 when DEBUG:
-  proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
-    echo "[GL]: " & $message # Assuming this is 0 terminated
-  glDebugMessageCallback(debugMessageCallback, nil)
-  #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
-  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nil, false)
+  if glew.getVar(KHR_debug):
+    proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
+      echo "[GL]: " & $message # Assuming this is 0 terminated
+    glDebugMessageCallback(debugMessageCallback, nil)
+    #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nil, false)
 
 # OpenGL setup
 glEnable(GL_BLEND)
