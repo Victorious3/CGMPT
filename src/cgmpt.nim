@@ -35,6 +35,7 @@ glFrontFace(GL_CCW)
 
 glViewport(0, 0, 800, 450) # FIXME: Don't hardcode, get window size somehow.
 
+# This is actually not needed since it wraps every function in error checking but might want to remove that in the future for performance reasons
 gl.checkGLerror()
 
 var running = true

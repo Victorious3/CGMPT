@@ -1,16 +1,12 @@
 import opengl
 
 type
-  ## Represents the handle of an OpenGL object.
-  GlHandle* = GLuint
-  
   ## Represents an OpenGL program object.
-  Program* = ref object
-    handle*: GlHandle
+  Program* = distinct GLhandle
   
   ## Represents an OpenGL shader object.
-  Shader* = ref object
-    handle*: GlHandle
+  Shader* = object
+    handle*: GLhandle
     shaderType*: ShaderType
   
   ShaderType* {.pure.} = enum GLenum
@@ -21,9 +17,8 @@ type
   
   ShaderException* = object of Exception
 
-converter toHandle*(value: Program): GlHandle = value.handle
-converter toHandle*(value: Shader): GlHandle = value.handle
-
+converter toHandle*(value: Program): GLhandle = value.handle
+converter toHandle*(value: Shader): GLhandle = value.handle
 
 ## Returns the information log of the OpenGL object, or nil if none.
 proc getInfoLog[T](obj: T): string =
