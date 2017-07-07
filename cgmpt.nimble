@@ -18,7 +18,8 @@ requires "glm >= 0.1.1"
 # Build options
 srcDir = "src"
 binDir = "bin"
-bin    = @[name]
+skipFiles = @["process_assets.nim"]
+bin    = @[name, "process_assets"]
 
 # Tasks
 task run, "Runs the application":
