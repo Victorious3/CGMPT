@@ -1,5 +1,5 @@
 import os, parseopt2, macros, tables, strutils
-import 
+import
   cgmptpkg/config,
   cgmptpkg/render/shader
 

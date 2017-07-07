@@ -2,11 +2,10 @@ import
   opengl as gl,
   strutils
 
-import 
+import
   cgmptpkg/config,
   cgmptpkg/sdl,
   cgmptpkg/glew,
-  cgmptpkg/render,
   cgmptpkg/resources
 
 const BG_COLOR = (0.3, 0.1, 0.1)
@@ -21,7 +20,8 @@ if int(error) != 0:
 # Set debug flag to get all log output
 when DEBUG:
   if glewGetVar(KHR_debug):
-    proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
+    proc debugMessageCallback(source: GLenum, typ: GLenum, id: GLuint, severity: GLenum,
+                              length: GLsizei, message: ptr GLchar, userParam: pointer) {.stdcall.} =
       echo "[GL]: " & $message # Assuming this is 0 terminated
     glDebugMessageCallback(debugMessageCallback, nil)
     #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
@@ -56,6 +56,7 @@ while running:
   
   glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+  
   sdl.swapBuffers()
 
 # Cleanup
