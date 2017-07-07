@@ -65,5 +65,5 @@ proc traverse(dir: string, resources: Resource, extFilter: proc(ext: string): bo
       let res = Resource(kind: pcFile, path: path, ext: ext, ast: resProc(path))
       resources.dir.add(res)
 
-#traverse(RESOURCE_FOLDER, resources, proc(e: string): bool = e notin skipExt)
-#traverse(RESOURCE_FOLDER, resources, proc(e: string): bool = e in skipExt)
+traverse(RESOURCE_FOLDER, resources, proc(e: string): bool = e notin skipExt)
+traverse(RESOURCE_FOLDER, resources, proc(e: string): bool = e in skipExt)
