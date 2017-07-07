@@ -18,9 +18,12 @@ requires "glm >= 0.1.1"
 # Build options
 srcDir = "src"
 binDir = "bin"
-skipFiles = @["process_assets.nim"]
 bin    = @[name, "process_assets"]
+skipFiles = @["process_assets.nim"]
 
 # Tasks
 task run, "Runs the application":
   exec "./$#/$#" % [binDir, name]
+
+task assets, "Processes the assets and compiles their information into resources.nim":
+  exec "./$#/$#" % [binDir, "process_assets"]
