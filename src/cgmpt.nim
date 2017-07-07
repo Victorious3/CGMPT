@@ -42,9 +42,8 @@ gl.checkGLerror()
 var running = true
 
 # Processing events
-proc pollEvents() =
-  var event: sdl.Event
-  while sdl.pollEvent(event):
+proc processEvents() =
+  for event in sdl.pollEvents():
     case event.kind
     of sdl.EventType.QuitEvent:
       running = false
@@ -52,7 +51,7 @@ proc pollEvents() =
 
 # Application loop
 while running:
-  pollEvents()
+  processEvents()
   
   glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)

@@ -49,8 +49,10 @@ proc init*(title = "SDL Window", size: WindowSize = (400, 300), glVersion: GlVer
 export
   sdl.Event,
   sdl.EventType
-proc pollEvent*(event: var sdl.Event): bool =
-  sdl.pollEvent(event)
+iterator pollEvents*(): sdl.Event =
+  var event: sdl.Event = defaultEvent
+  while sdl.pollEvent(event):
+    yield event
 
 ## Swaps the OpenGL buffers.
 proc swapBuffers*() =
