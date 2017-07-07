@@ -17,11 +17,11 @@ var resources = Resource(kind: pcDir)
 
 type ResourceProc = proc(file: string): NimNode
 
-proc readProg(file: string): NimNode = 
+proc readProg(file: string): NimNode =
   discard
 
 proc readShader(tpe: ShaderType): auto =
-  proc impl(file: string): NimNode = 
+  proc impl(file: string): NimNode =
     discard
   impl
 
@@ -47,7 +47,7 @@ for kind, key, val in getopt():
 if not dirExists RESOURCE_FOLDER:
   raise newException(IOError, "Resorce folder " & RESOURCE_FOLDER & " doesnt exist!")
 
-proc traverse(dir: string, resources: Resource, extFilter: proc(ext: string): bool) = 
+proc traverse(dir: string, resources: Resource, extFilter: proc(ext: string): bool) =
   for kind, path in walkDir dir:
     if kind == pcDir:
       let res = Resource(kind: pcDir, path: path)
@@ -55,7 +55,7 @@ proc traverse(dir: string, resources: Resource, extFilter: proc(ext: string): bo
       resources.dir.add(res)
     elif kind == pcFile:
       let ext = path.split(".")[1]
-
+      
       if not extFilter(ext): continue
       if not FileTypes.hasKey(ext):
         echo "Skipping ", path, ", unknown filetype"
