@@ -6,7 +6,8 @@ import
   cgmptpkg/config,
   cgmptpkg/sdl,
   cgmptpkg/glew,
-  cgmptpkg/render
+  cgmptpkg/render,
+  cgmptpkg/resources
 
 const BG_COLOR = (0.3, 0.1, 0.1)
 

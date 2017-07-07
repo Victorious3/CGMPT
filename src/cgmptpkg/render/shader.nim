@@ -13,11 +13,11 @@ type
     Fragment = GL_FRAGMENT_SHADER,
     Vertex   = GL_VERTEX_SHADER,
     Geometry = GL_GEOMETRY_SHADER,
-    Compute  = GL_COMPUTE_SHADER
+    #Compute  = GL_COMPUTE_SHADER
   
   ShaderException* = object of Exception
 
-converter toHandle*(value: Program): GLhandle = value.handle
+converter toHandle*(value: Program): GLhandle = GLhandle(value)
 converter toHandle*(value: Shader): GLhandle = value.handle
 
 ## Returns the information log of the OpenGL object, or nil if none.
@@ -53,7 +53,7 @@ proc checkInfoLog[T](obj: T) =
 
 ## Creates and returns a new OpenGL Program.
 proc newProgram*(): Program =
-  Program(handle: glCreateProgram())
+  Program(glCreateProgram())
 
 ## Attaches a Shader to a Program.
 proc attach*(program: Program, shader: Shader) =
