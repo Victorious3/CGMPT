@@ -4,14 +4,13 @@ import config
 type
   SdlException* = object of Exception
   WindowSize* = tuple[width: int, height: int]
-  GlVersion* = tuple[major: int, minor: int]
 
 var
   window: sdl.WindowPtr
   context: sdl.GlContextPtr
 
 ## Initializes SDL, creates and shows the window.
-proc init*(title = "SDL Window", size: WindowSize = (400, 300), glVersion: GlVersion = (3, 3)) =
+proc init*(title: string, size: WindowSize) =
   if sdl.init(sdl.INIT_VIDEO or sdl.INIT_AUDIO or sdl.INIT_EVENTS) != SdlSuccess:
     raise newException(SdlException, "Error during sdl.init: " & $sdl.getError())
   
@@ -28,8 +27,8 @@ proc init*(title = "SDL Window", size: WindowSize = (400, 300), glVersion: GlVer
     raise newException(SdlException, "Error during sdl.createWindow: " & $sdl.getError())
   
   # OpenGL flags
-  discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, int32(glVersion.major))
-  discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, int32(glVersion.minor))
+  discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, int32(GL_VERSION.major))
+  discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, int32(GL_VERSION.minor))
   discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
   
   when DEBUG:
@@ -62,3 +61,4 @@ proc swapBuffers*() =
 proc destroy*() =
   sdl.destroy(window)
   sdl.glDeleteContext(context)
+  sdl.quit()

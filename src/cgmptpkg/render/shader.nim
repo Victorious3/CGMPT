@@ -13,7 +13,7 @@ type
     Fragment = GL_FRAGMENT_SHADER,
     Vertex   = GL_VERTEX_SHADER,
     Geometry = GL_GEOMETRY_SHADER,
-    #Compute  = GL_COMPUTE_SHADER
+    Compute  = GL_COMPUTE_SHADER
   
   ShaderException* = object of Exception
 
