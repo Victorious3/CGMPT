@@ -23,7 +23,21 @@ type AssetProc = proc(file: FileStream): YamlNode
 proc readProg(file: FileStream): YamlNode =
   let prog = loadDom(file).root
   assert prog.kind == ySequence, "Program file needs to be a list of shader references"
-  return prog
+  prog
+
+## Query the names and types for the specified interface
+iterator interfaceProperties(program: GLuint, programInterface: GLenum): (string, GLenum) =
+  var activeResources: GLint
+  glGetProgramInterfaceiv(program, programInterface, GL_ACTIVE_RESOURCES, addr activeResources) # Number of active resources
+  
+  for i in 0..GLuint(activeResources):
+    var propertyBuffer: array[2, GLint]
+    var property = [GL_TYPE, GL_NAME_LENGTH]
+    glGetProgramResourceiv(program, programInterface, i, GLsizei(2), addr property[0], GLsizei(2), nil, addr propertyBuffer[0])
+    var name = newString(propertyBuffer[1])
+    glGetProgramResourceName(program, programInterface, i, propertyBuffer[1], nil, name)
+    
+    yield (name, GLenum(propertyBuffer[0]))
 
 proc readShader(tpe: ShaderType): auto =
   proc impl(file: FileStream): YamlNode =
@@ -35,9 +49,8 @@ proc readShader(tpe: ShaderType): auto =
     try:
       program.link()
     except ShaderException: discard # Successful linking is not required
-    
-    result = newYamlNode([])
-    #if tpe == ShaderType.Fragment: # Attributes
+
+    #TODO
   impl
 
 let FileTypes = {
@@ -93,8 +106,8 @@ proc traverse(dir: string, assets: Asset) =
 sdl.init(0)
 let window = sdl.createWindow("", 0, 0, 1, 1, SDL_WINDOW_HIDDEN)
 # OpenGL flags
-discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, int32(config.GL_VERSION.major))
-discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, int32(config.GL_VERSION.minor))
+discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4) #4.2 required for extended api
+discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2)
 discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
 
 let context = window.glCreateContext()
