@@ -2,7 +2,8 @@ import opengl
 
 type
   ## Represents an OpenGL program object.
-  Program* = distinct GLhandle
+  Program* = object
+    handle*: GLhandle
   
   ## Represents an OpenGL shader object.
   Shader* = object
@@ -17,8 +18,9 @@ type
   
   ShaderException* = object of Exception
 
-converter toHandle*(value: Program): GLhandle = GLhandle(value)
+converter toHandle*(value: Program): GLhandle = value.handle
 converter toHandle*(value: Shader): GLhandle = value.handle
+converter toEnum*(value: ShaderType): GLenum = GLenum(value)
 
 ## Returns the information log of the OpenGL object, or nil if none.
 proc getInfoLog[T](obj: T): string =
@@ -53,7 +55,7 @@ proc checkInfoLog[T](obj: T) =
 
 ## Creates and returns a new OpenGL Program.
 proc newProgram*(): Program =
-  Program(glCreateProgram())
+  Program(handle: glCreateProgram())
 
 ## Attaches a Shader to a Program.
 proc attach*(program: Program, shader: Shader) =
@@ -71,7 +73,7 @@ proc use*(program: Program) =
 
 ## Creates a new OpenGL Shader object.
 proc newShader*(shaderType: ShaderType): Shader =
-  Shader(handle: glCreateShader(GLenum(shaderType)),
+  Shader(handle: glCreateShader(shaderType),
          shaderType: shaderType)
 
 ## Sets the source code of a Shader.
