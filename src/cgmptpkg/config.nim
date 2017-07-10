@@ -5,6 +5,6 @@ const
   GL_VERSION* = (major: 3, minor: 3)
 
   ## Folder to search for resources
-  RESOURCE_FOLDER* = "resources"
-  ## Auto generated asset file, see process_assets.nim
-  ASSET_FILE*      = "cgmptpkg/assets.yaml"
+  ASSET_FOLDER* = "resources"
+  ## Auto generated asset file, see process_assets.nim (relative to bin/)
+  ASSET_FILE*   = "src/cgmptpkg/assets.yaml"

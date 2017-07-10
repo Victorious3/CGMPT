@@ -16,6 +16,7 @@ requires "opengl >= 1.1.0"
 requires "glm >= 0.1.1"
 requires "yaml >= 0.9.1"
 #requires "yaml#8a83272"
+requires "glm >= 0.1.1"
 
 # Build options
 srcDir = "src"
