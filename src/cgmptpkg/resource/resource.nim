@@ -1,4 +1,4 @@
-import ../render/shader
+import ../render/shaders
 
 type
   GLResource = concept x

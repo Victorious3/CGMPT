@@ -3,10 +3,12 @@ import
   strutils
 
 import
+  cgmptpkg/render/buffers,
+  cgmptpkg/render/shaders,
+  cgmptpkg/assets,
   cgmptpkg/config,
-  cgmptpkg/sdl,
   cgmptpkg/glew,
-  cgmptpkg/assets
+  cgmptpkg/sdl
 
 const BG_COLOR = (0.3, 0.1, 0.1)
 
@@ -26,6 +28,24 @@ when DEBUG:
     glDebugMessageCallback(debugMessageCallback, nil)
     #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nil, false)
+
+# Vertex Array / Buffer setup
+# TODO: Move this into helper class, maybe reorganize all GL wrapper code into a single file?
+var vao: GLuint
+glGenVertexArrays(1, addr(vao))
+glBindVertexArray(vao)
+var bufferData = @[0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0]
+let buffer = createBuffer(BufferTarget.Array, bufferData)
+glVertexAttribPointer(0, 3, cGL_FLOAT, false, 0, nil)
+glEnableVertexAttribArray(0)
+
+# Shaders setup
+let program = newProgram()
+program.attach(loadShaderFile(ShaderType.Vertex, "./assets/shader/core.vert"))
+program.attach(loadShaderFile(ShaderType.Fragment, "./assets/shader/core.frag"))
+glBindAttribLocation(program, 0, "vertex")
+program.link()
+program.use()
 
 # OpenGL setup
 glEnable(GL_BLEND)
@@ -55,6 +75,8 @@ while running:
   
   glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+  
+  glDrawArrays(GL_TRIANGLES, 0, 3)
   
   sdl.swapBuffers()
 

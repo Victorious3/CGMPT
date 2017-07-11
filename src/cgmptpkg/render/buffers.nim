@@ -2,7 +2,7 @@ import opengl
 
 type
   ## Represents an OpenGL buffer object.
-  Buffer*[T] = object
+  Buffer* = object
     handle*: GLhandle
     target*: BufferTarget
   
@@ -26,23 +26,23 @@ converter toEnum*(value: BufferUsageHint): GLenum = GLEnum(value)
 
 
 ## Generates a new OpenGL Buffer object with the specified target.
-proc newBuffer*[T](target: BufferTarget): Buffer[T] =
+proc newBuffer*(target: BufferTarget): Buffer =
   result = Buffer(target: target)
   glGenBuffers(1, addr(result.handle))
 
 ## Binds the specified Buffer.
-proc `bind`*[T](buffer: Buffer[T]) =
+proc `bind`*(buffer: Buffer) =
   glBindBuffer(buffer.target, buffer)
 
 ## Initializes a Buffer's data store with the specified data.
-proc data*[T](buffer: Buffer[T], data: ref openArray[T],
+proc data*[T](buffer: Buffer, data: var seq[T],
               usage = BufferUsageHint.StaticDraw) =
-  glBufferData(buffer.target, data.len, addr(data), usage)
+  glBufferData(buffer.target, data.len * sizeof(T), addr(data[0]), usage)
 
 
 ## Generates, binds and initialized a Buffer with the specified data.
-proc createBuffer*[T](target: BufferTarget, data: ref openArray[T],
-                      usage = BufferUsageHint.StaticDraw): Buffer[T] =
+proc createBuffer*[T](target: BufferTarget, data: var seq[T],
+                      usage = BufferUsageHint.StaticDraw): Buffer =
   result = newBuffer(target)
   result.`bind`()
   result.data(data, usage)

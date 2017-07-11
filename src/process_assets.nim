@@ -2,8 +2,8 @@ import os, parseopt2, tables, strutils, yaml, streams, typetraits, ospaths
 import sdl2 as sdl, opengl, glm
 
 import
+  cgmptpkg/render/shaders,
   cgmptpkg/config,
-  cgmptpkg/render/shader,
   cgmptpkg/glew
 
 # Might want to move these elsewhere, could be useful in other context
@@ -166,8 +166,8 @@ for kind, key, val in getopt():
       deamon = true
   else: discard
 
-if not dirExists ASSET_FOLDER:
-  raise newException(IOError, "Resorce folder " & ASSET_FOLDER & " doesnt exist!")
+if not dirExists ASSETS_FOLDER:
+  raise newException(IOError, "Resorce folder " & ASSETS_FOLDER & " doesnt exist!")
 
 proc traverse(dir: string, assets: YamlNode) =
   for kind, path in walkDir dir:
@@ -203,9 +203,9 @@ discard glewInit()
 checkGLerror()
 
 let assets = newYamlMap()
-traverse(ASSET_FOLDER, assets)
+traverse(ASSETS_FOLDER, assets)
 var _, assetStream = assets.initYamlDoc().serialize(serializationTagLibrary)
-writeFile(ASSET_FILE, present(assetStream, serializationTagLibrary))
+writeFile(ASSETS_FILE, present(assetStream, serializationTagLibrary))
 
 # Cleanup
 sdl.destroy(window)
