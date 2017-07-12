@@ -1,21 +1,23 @@
 import
-  opengl as gl,
+  glm,
+  opengl,
   strutils
 
 import
   cgmptpkg/render/buffers,
+  cgmptpkg/render/colors,
   cgmptpkg/render/shaders,
   cgmptpkg/assets,
   cgmptpkg/config,
   cgmptpkg/glew,
+  cgmptpkg/misc,
   cgmptpkg/sdl
 
-const BG_COLOR = (0.3, 0.1, 0.1)
+const BG_COLOR = newColorRGB(0x441111)
 
 sdl.init("CGMPT - " & VERSION, (800, 450))
 
 let error = glewInit()
-
 if int(error) != 0:
   echo "Error initializing GLEW: " & $glewGetErrorString(error)
 
@@ -29,24 +31,6 @@ when DEBUG:
     #glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nil, false)
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nil, false)
 
-# Vertex Array / Buffer setup
-# TODO: Move this into helper class, maybe reorganize all GL wrapper code into a single file?
-var vao: GLuint
-glGenVertexArrays(1, addr(vao))
-glBindVertexArray(vao)
-var bufferData = @[0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0]
-let buffer = createBuffer(BufferTarget.Array, bufferData)
-glVertexAttribPointer(0, 3, cGL_FLOAT, false, 0, nil)
-glEnableVertexAttribArray(0)
-
-# Shaders setup
-let program = newProgram()
-program.attach(loadShaderFile(ShaderType.Vertex, "./assets/shader/core.vert"))
-program.attach(loadShaderFile(ShaderType.Fragment, "./assets/shader/core.frag"))
-glBindAttribLocation(program, 0, "vertex")
-program.link()
-program.use()
-
 # OpenGL setup
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -57,7 +41,34 @@ glFrontFace(GL_CCW)
 glViewport(0, 0, 800, 450) # FIXME: Don't hardcode, get window size somehow.
 
 # This is actually not needed since it wraps every function in error checking but might want to remove that in the future for performance reasons
-gl.checkGLerror()
+checkGLerror()
+
+# Vertex Array / Buffer setup
+# TODO: Move this into helper class, maybe reorganize all GL wrapper code into a single file?
+let vBuffer = createBuffer(BufferTarget.Array, varof(@[0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0]))
+let cBuffer = createBuffer(BufferTarget.Array, varof(@[C_RED, C_LIME, C_BLUE]))
+
+var vao: GLuint
+glGenVertexArrays(1, addr(vao))
+vao.glBindVertexArray()
+vBuffer.`bind`()
+glVertexAttribPointer(0, 3, cGL_FLOAT, false, 0, nil)
+cBuffer.`bind`()
+glVertexAttribPointer(1, 4, cGL_FLOAT, false, 0, nil)
+glEnableVertexAttribArray(0)
+glEnableVertexAttribArray(1)
+
+# Shaders setup
+let program = newProgram()
+program.attach(loadShaderFile(ShaderType.Vertex, "./assets/shader/core.vert"))
+program.attach(loadShaderFile(ShaderType.Fragment, "./assets/shader/core.frag"))
+program.glBindAttribLocation(0, "vertex")
+program.glBindAttribLocation(1, "color")
+program.link()
+let projection = program.getUniform("projection")
+let modelview = program.getUniform("modelview")
+program.use()
+projection.set(varof(mat4f()))
 
 var running = true
 
@@ -72,12 +83,8 @@ proc processEvents() =
 # Application loop
 while running:
   processEvents()
-  
-  glClearColor(BG_COLOR[0], BG_COLOR[1], BG_COLOR[2], 1.0)
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-  
+  BG_COLOR.glClear()
   glDrawArrays(GL_TRIANGLES, 0, 3)
-  
   sdl.swapBuffers()
 
 # Cleanup

@@ -1,4 +1,7 @@
-import opengl
+import
+  glm,
+  opengl,
+  strutils
 
 type
   ## Represents an OpenGL program object.
@@ -10,6 +13,10 @@ type
     handle*: GLhandle
     shaderType*: ShaderType
   
+  ## Represents an OpenGL uniform variable for a program object.
+  Uniform* = object
+    location*: GLint
+  
   ShaderType* {.pure.} = enum GLenum
     Fragment = GL_FRAGMENT_SHADER,
     Vertex   = GL_VERTEX_SHADER,
@@ -18,9 +25,10 @@ type
   
   ShaderException* = object of Exception
 
-converter toHandle*(value: Program): GLhandle = value.handle
-converter toHandle*(value: Shader): GLhandle = value.handle
-converter toEnum*(value: ShaderType): GLenum = GLenum(value)
+converter toGLhandle*(value: Program): GLhandle = value.handle
+converter toGLhandle*(value: Shader): GLhandle = value.handle
+converter toGLint*(value: Uniform): GLint = value.location
+converter toGLenum*(value: ShaderType): GLenum = GLenum(value)
 
 ## Returns the information log of the OpenGL object, or nil if none.
 proc getInfoLog[T](obj: T): string =
@@ -97,3 +105,16 @@ proc loadShaderString*(shaderType: ShaderType, source: string): Shader =
 ## Creates and compiles a new Shader from a source file.
 proc loadShaderFile*(shaderType: ShaderType, path: string): Shader =
   loadShaderString(shaderType, readFile(path))
+
+
+proc getUniform*(program: Program, name: string): Uniform =
+  let loc = program.glGetUniformLocation(name)
+  # This will return -1 for unused (not active) uniforms that have been optimized out..?
+  if loc == -1: raise newException(
+    ShaderException, "The uniform '$#' could not be retrieved" % [name])
+  Uniform(location: loc)
+
+# TODO: Make uniform setting strongly typed?
+
+proc set*(uniform: Uniform, value: var Mat4f) =
+  uniform.glUniformMatrix4fv(1, false, addr(value[0,0]))
