@@ -45,7 +45,7 @@ checkGLerror()
 
 # Vertex Array / Buffer setup
 # TODO: Move this into helper class, maybe reorganize all GL wrapper code into a single file?
-let vBuffer = createBuffer(BufferTarget.Array, varof(@[0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0]))
+let vBuffer = createBuffer(BufferTarget.Array, varof(@[vec3d(0.0, 1.0, 0.0), vec3d(-1.0, -1.0, 0.0), vec3d(1.0, -1.0, 0.0)]))
 let cBuffer = createBuffer(BufferTarget.Array, varof(@[C_RED, C_LIME, C_BLUE]))
 
 var vao: GLuint

@@ -1,6 +1,6 @@
 #version 330 core
 
-in ivec2 vertex;
+in vec3 vertex;
 in vec2 texture;
 in vec4 color;
 
@@ -11,7 +11,7 @@ uniform mat4 projection;
 uniform mat4 modelview = mat4(1.0);
 
 void main() {
-	gl_Position = projection * modelview * vec4(vertex, 0.0, 1.0);
+	gl_Position = projection * modelview * vec4(vertex, 1.0);
 
 	frag_texture = texture;
 	frag_color = color;
