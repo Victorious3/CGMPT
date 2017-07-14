@@ -1,6 +1,17 @@
 # AUTO GENERATED FILE - DO NOT EDIT
-import glm
+import glm, yaml
 import resource/resource
+
+proc readProgram(tree: YamlNode, data: YamlNode): NimNode =
+  discard
+
+proc readShader(tree: YamlNode, data: YamlNode): NimNode =
+  discard
+
+macro readAssets: typed =
+  discard
+
+readAssets
 
 #[
 shader/:

@@ -2,7 +2,7 @@ import os, parseopt2, tables, strutils, yaml, streams, typetraits, ospaths
 import sdl2 as sdl, opengl, glm
 
 import
-  cgmptpkg/render/shaders,
+  cgmptpkg/render/shader,
   cgmptpkg/config,
   cgmptpkg/glew
 
@@ -167,7 +167,7 @@ for kind, key, val in getopt():
   else: discard
 
 if not dirExists ASSETS_FOLDER:
-  raise newException(IOError, "Resorce folder " & ASSETS_FOLDER & " doesnt exist!")
+  raise newException(IOError, "Asset folder " & ASSETS_FOLDER & " doesnt exist!")
 
 proc traverse(dir: string, assets: YamlNode) =
   for kind, path in walkDir dir:

@@ -4,9 +4,9 @@ import
   strutils
 
 import
-  cgmptpkg/render/buffers,
-  cgmptpkg/render/colors,
-  cgmptpkg/render/shaders,
+  cgmptpkg/render/buffer,
+  cgmptpkg/render/color,
+  cgmptpkg/render/shader,
   cgmptpkg/assets,
   cgmptpkg/config,
   cgmptpkg/glew,
