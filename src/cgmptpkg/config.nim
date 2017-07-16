@@ -2,7 +2,7 @@ const
   VERSION* = "0.1"
   DEBUG*   = true
   
-  GL_VERSION* = (major: 3, minor: 3)
+  GL_VERSION* = (3, 3)
   
   ## Folder to search for resources
   ASSETS_FOLDER* = "resources"

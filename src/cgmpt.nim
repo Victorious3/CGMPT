@@ -35,6 +35,8 @@ when DEBUG:
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
+glEnable(GL_DEPTH_TEST)
+
 glEnable(GL_CULL_FACE)
 glFrontFace(GL_CCW)
 
@@ -45,8 +47,31 @@ checkGLerror()
 
 # Vertex Array / Buffer setup
 # TODO: Move this into helper class, maybe reorganize all GL wrapper code into a single file?
-let vBuffer = createBuffer(BufferTarget.Array, varof(@[vec3d(0.0, 1.0, 0.0), vec3d(-1.0, -1.0, 0.0), vec3d(1.0, -1.0, 0.0)]))
-let cBuffer = createBuffer(BufferTarget.Array, varof(@[C_RED, C_LIME, C_BLUE]))
+var cube = @[
+  vec3f(-1.0, -1.0, -1.0), vec3f(-1.0, -1.0,  1.0), vec3f(-1.0,  1.0,  1.0),
+  vec3f( 1.0,  1.0, -1.0), vec3f(-1.0, -1.0, -1.0), vec3f(-1.0,  1.0, -1.0),
+  vec3f( 1.0, -1.0,  1.0), vec3f(-1.0, -1.0, -1.0), vec3f( 1.0, -1.0, -1.0),
+  vec3f( 1.0,  1.0, -1.0), vec3f( 1.0, -1.0, -1.0), vec3f(-1.0, -1.0, -1.0),
+  vec3f(-1.0, -1.0, -1.0), vec3f(-1.0,  1.0,  1.0), vec3f(-1.0,  1.0, -1.0),
+  vec3f( 1.0, -1.0,  1.0), vec3f(-1.0, -1.0,  1.0), vec3f(-1.0, -1.0, -1.0),
+  vec3f(-1.0,  1.0,  1.0), vec3f(-1.0, -1.0,  1.0), vec3f( 1.0, -1.0,  1.0),
+  vec3f( 1.0,  1.0,  1.0), vec3f( 1.0, -1.0, -1.0), vec3f( 1.0,  1.0, -1.0),
+  vec3f( 1.0, -1.0, -1.0), vec3f( 1.0,  1.0,  1.0), vec3f( 1.0, -1.0,  1.0),
+  vec3f( 1.0,  1.0,  1.0), vec3f( 1.0,  1.0, -1.0), vec3f(-1.0,  1.0, -1.0),
+  vec3f( 1.0,  1.0,  1.0), vec3f(-1.0,  1.0, -1.0), vec3f(-1.0,  1.0,  1.0),
+  vec3f( 1.0,  1.0,  1.0), vec3f(-1.0,  1.0,  1.0), vec3f( 1.0, -1.0,  1.0)
+];
+var cubeColors = @[
+  C_RED,    C_RED,    C_RED,    C_RED,    C_RED,    C_RED,
+  C_LIME,   C_LIME,   C_LIME,   C_LIME,   C_LIME,   C_LIME,
+  C_BLUE,   C_BLUE,   C_BLUE,   C_BLUE,   C_BLUE,   C_BLUE,
+  C_YELLOW, C_YELLOW, C_YELLOW, C_YELLOW, C_YELLOW, C_YELLOW,
+  C_PURPLE, C_PURPLE, C_PURPLE, C_PURPLE, C_PURPLE, C_PURPLE,
+  C_WHITE,  C_WHITE,  C_WHITE,  C_WHITE,  C_WHITE,  C_WHITE
+];
+
+let vBuffer = createBuffer(BufferTarget.Array, cube)
+let cBuffer = createBuffer(BufferTarget.Array, cubeColors)
 
 var vao: GLuint
 glGenVertexArrays(1, addr(vao))
@@ -62,13 +87,14 @@ glEnableVertexAttribArray(1)
 let program = newProgram()
 program.attach(loadShaderFile(ShaderType.Vertex, "./assets/shader/core.vert"))
 program.attach(loadShaderFile(ShaderType.Fragment, "./assets/shader/core.frag"))
-program.glBindAttribLocation(0, "vertex")
-program.glBindAttribLocation(1, "color")
+program.glBindAttribLocation(0, "inPosition")
+program.glBindAttribLocation(1, "inColor")
 program.link()
-let projection = program.getUniform("projection")
-let modelview = program.getUniform("modelview")
+let projectionLoc = program.getUniform("projection")
+let modelviewLoc = program.getUniform("modelview")
+var modelview = lookAt(vec3f(2, 2, 2), vec3f(0, 0, 0), vec3f(0, 1, 0))
 program.use()
-projection.set(varof(mat4f()))
+projectionLoc.set(varof(perspective[float32](radians(75'f32), 800 / 450'f32, 0.1, 100)))
 
 var running = true
 
@@ -83,8 +109,14 @@ proc processEvents() =
 # Application loop
 while running:
   processEvents()
+  
+  modelview = modelview.rotate(vec3f(0, 1, 0), 0.0001)
+  modelviewLoc.set(modelview)
+  
   BG_COLOR.glClear()
-  glDrawArrays(GL_TRIANGLES, 0, 3)
+  vao.glBindVertexArray()
+  glDrawArrays(GL_TRIANGLES, 0, GLsizei(cube.len))
+  
   sdl.swapBuffers()
 
 # Cleanup

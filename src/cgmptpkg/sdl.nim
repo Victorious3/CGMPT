@@ -27,8 +27,8 @@ proc init*(title: string, size: WindowSize) =
     raise newException(SdlException, "Error during sdl.createWindow: " & $sdl.getError())
   
   # OpenGL flags
-  discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, int32(GL_VERSION.major))
-  discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, int32(GL_VERSION.minor))
+  discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, int32(GL_VERSION[0]))
+  discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, int32(GL_VERSION[1]))
   discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE)
   
   when DEBUG:
