@@ -4,14 +4,14 @@ import
   strutils
 
 import
-  cgmptpkg/render/buffer,
-  cgmptpkg/render/color,
-  cgmptpkg/render/shader,
-  cgmptpkg/assets,
-  cgmptpkg/config,
-  cgmptpkg/glew,
-  cgmptpkg/misc,
-  cgmptpkg/sdl
+  render/buffer,
+  render/color,
+  render/shader,
+  assets,
+  config,
+  glew,
+  misc,
+  sdl
 
 const BG_COLOR = newColorRGB(0x441111)
 

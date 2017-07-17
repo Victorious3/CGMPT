@@ -3,14 +3,11 @@
   
   "isShellCommand": true,
   "suppressTaskName": true,
-  "command": "nimble",
+  "command": "nim",
   
   "tasks": [{
     "taskName": "build",
     "isBuildCommand": true,
-    "args": [ "build" ]
-  }, {
-    "taskName": "run",
-    "args": [ "run" ]
+    "args": [ "compile", "--out:bin/cgmpt.exe", "src/main.nim" ]
   }]
 }

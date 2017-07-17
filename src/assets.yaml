@@ -1,0 +1,26 @@
+%YAML 1.2
+%TAG !n! tag:nimyaml.org,2016:
+--- 
+shader\: 
+  core.prog: [frag/core.frag, vert/core.vert]
+  core.frag: 
+    in: 
+      frag_texture: Vec2
+      frag_color: Vec4
+    uniform: 
+      use_texture: bool
+      tex: sampler2D
+    out: 
+      color: Vec4
+  core.vert: 
+    in: 
+      vertex: Vec2i
+      color: Vec4
+      texture: Vec2
+    uniform: 
+      modelview: Mat4
+      projection: Mat4
+    out: 
+      gl_Position: Vec4
+      frag_texture: Vec2
+      frag_color: Vec4
